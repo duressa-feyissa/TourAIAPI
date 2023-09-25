@@ -9,8 +9,8 @@ router = APIRouter()
 async def create_events(event: Event) -> Event:
     return await create_event(event)
 
-@router.get("/", response_model=List[Event])
-async def get_all_Events() -> List[Event]:
+@router.get("/")
+async def get_all_Events():
     return await get_all_events()
 
 @router.get("/{event_id}/", response_model=Event)

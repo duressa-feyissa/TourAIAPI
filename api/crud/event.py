@@ -14,7 +14,7 @@ async def create_event(event: Event) -> Event:
     event.id = str(result.inserted_id)
     return event
 
-async def get_all_events() -> List[Event]:
+async def get_all_events():
     events = []
     async for event in db_client['events'].find():
         events.append(Event(**event))
