@@ -10,3 +10,4 @@ pymongo
 email-validator
 python-jose[cryptography]
 passlib[bcrypt]
+motor
