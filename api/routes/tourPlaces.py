@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException
 from api.schema.tourPlace import TourPlaceModel, TourPlace
 from api.crud.tourPlace import (
@@ -14,8 +15,8 @@ router = APIRouter()
 async def create_tour_place_route(tour_place: TourPlaceModel) -> TourPlace:
     return await create_tour_place(tour_place)
 
-@router.get("/", response_model=list[TourPlace])
-async def get_tour_places_route() -> list[TourPlace]:
+@router.get("/", response_model=List[TourPlace])
+async def get_tour_places_route() -> List[TourPlace]:
     return await get_tour_places()
 
 @router.get("/{id}/", response_model=TourPlace)
