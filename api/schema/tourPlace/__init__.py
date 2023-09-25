@@ -37,7 +37,9 @@ class Accommodation(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = example
+
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example
 
 class AccommodationModel(Accommodation):
     pass
@@ -68,7 +70,7 @@ class TourPlace(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        
+
     def __get_pydantic_json_schema__(self, *, schema):
         return example
         
@@ -91,7 +93,6 @@ class TourPlaceUpdateModel(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = example
 
     def __get_pydantic_json_schema__(self, *, schema):
         return example
