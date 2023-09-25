@@ -32,7 +32,9 @@ class Event(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = example
+
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example
 
 class TicketInfo(BaseModel):
     available: Optional[str]
@@ -60,4 +62,6 @@ class EventUpdate(BaseModel):
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = example
+        
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example

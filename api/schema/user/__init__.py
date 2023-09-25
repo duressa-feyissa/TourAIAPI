@@ -4,7 +4,7 @@ from api.model.pyObjectId import PyObjectId
 from api.schema.user.example import example
 from typing import Optional
 
-class User(BaseModel):
+class UserBase(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     firstname: str
     lastname: str
@@ -18,17 +18,21 @@ class User(BaseModel):
         json_encoders = {ObjectId: str}
         json_schema_extra = example
 
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example 
 
     @validator('role')
     def validate_role(cls, value):
         allowed_roles = ['admin', 'user', 'serviceProvider']
-        if value not in allowed_roles:
+        if value.lower() not in allowed_roles:
             raise ValueError(f"Invalid role. Allowed roles are {', '.join(allowed_roles)}")
         return value
 
-class UserModel(User):
-    password: str
+class User(UserBase):
+    pass
 
+class UserModel(UserBase):
+    password: str
 
 class UserUpdateModel(BaseModel):
     first_name: Optional[str]
@@ -42,11 +46,13 @@ class UserUpdateModel(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = example
+
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example 
 
     @validator('role')
     def validate_role(cls, value):
         allowed_roles = ['admin', 'user', 'serviceProvider']
-        if value and value not in allowed_roles:
+        if value and value.lower() not in allowed_roles:
             raise ValueError(f"Invalid role. Allowed roles are {', '.join(allowed_roles)}")
         return value

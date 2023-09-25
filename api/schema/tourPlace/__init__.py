@@ -63,11 +63,14 @@ class TourPlace(BaseModel):
     activities: List[ActivityModel]
     Weather: WeatherModel
     
+    
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = example
+        
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example
         
 class TourPlaceModel(TourPlace):
         Accommodation: Optional[List[AccommodationModel]]
@@ -89,3 +92,6 @@ class TourPlaceUpdateModel(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         json_schema_extra = example
+
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example
