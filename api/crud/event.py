@@ -17,7 +17,7 @@ async def create_event(event: Event) -> Event:
 async def get_all_events():
     events = []
     async for event in db_client['events'].find():
-        events.append(Event(**event))
+        events.append(event)
     return events
 
 async def get_event_by_id(event_id: str) -> Optional[Event]:
