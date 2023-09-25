@@ -18,6 +18,7 @@ class User(BaseModel):
         json_encoders = {ObjectId: str}
         json_schema_extra = example
 
+
     @validator('role')
     def validate_role(cls, value):
         allowed_roles = ['admin', 'user', 'serviceProvider']
