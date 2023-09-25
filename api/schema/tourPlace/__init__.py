@@ -34,10 +34,10 @@ class Accommodation(BaseModel):
     service: List[str]
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = example
+        json_schema_extra = example
 
 class AccommodationModel(Accommodation):
     pass
@@ -64,10 +64,10 @@ class TourPlace(BaseModel):
     Weather: WeatherModel
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = example
+        json_schema_extra = example
         
 class TourPlaceModel(TourPlace):
         Accommodation: Optional[List[AccommodationModel]]
@@ -85,6 +85,7 @@ class TourPlaceUpdateModel(BaseModel):
     Accommodation: Optional[List[AccommodationModel]]
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+        json_schema_extra = example

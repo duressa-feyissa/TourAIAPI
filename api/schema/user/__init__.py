@@ -13,10 +13,10 @@ class User(BaseModel):
     profile_image: Optional[str]
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = example
+        json_schema_extra = example
 
     @validator('role')
     def validate_role(cls, value):
@@ -36,12 +36,12 @@ class UserUpdateModel(BaseModel):
     role: Optional[str]
     profile_image: Optional[str]
     password: Optional[str]
-
+    
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        schema_extra = example
+        json_schema_extra = example
 
     @validator('role')
     def validate_role(cls, value):
