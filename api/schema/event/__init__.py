@@ -6,15 +6,15 @@ from api.schema.event.example import example
 from pydantic import BaseModel, Field
 
 class TicketInfo(BaseModel):
-    available: str
+    available: Optional[str]
     price: Optional[str]
 
 class ImageDetails(BaseModel):
-    url: str
+    url: Optional[str]
     caption: Optional[str]
 
 class Event(BaseModel):
-    id:  PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: Optional[str]
     title: str
     description: str
@@ -36,13 +36,16 @@ class Event(BaseModel):
     def __get_pydantic_json_schema__(self, *, schema):
         return example
 
-class TicketInfo(BaseModel):
-    available: Optional[str]
-    price: Optional[str]
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+    
+    @classmethod
+    def validate(cls, values):
+        return values
 
-class ImageDetails(BaseModel):
-    url: Optional[str]
-    caption: Optional[str]
+    def __get_pydantic_json_schema__(self, *, schema):
+        return example
 
 class EventUpdate(BaseModel):
     title: Optional[str]
