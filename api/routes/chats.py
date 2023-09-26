@@ -11,5 +11,3 @@ async def make_recommendation(chat: Recommendation, db: Session = Depends(get_db
     if result is None:
         raise HTTPException(status_code=404, detail="Recommendation failed")
     return result
-
-
