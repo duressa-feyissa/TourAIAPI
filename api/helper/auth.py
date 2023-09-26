@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, Request
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from api.crud.user import get_user_email
+from api.crud.user import get_user_by_email
 
 SECRET_KEY = "your_secret_key_here" 
 ALGORITHM = "HS256"
@@ -25,10 +25,10 @@ async def authenticate_user_by_token(request: Request):
     token = request.query_params.get("token")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        if email is None:
             raise HTTPException(status_code=400, detail="Invalid token")
-        user = await get_user_email(username)
+        user = await get_user_by_email(email)
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
         return user

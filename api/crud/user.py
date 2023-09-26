@@ -1,52 +1,48 @@
-from bson import ObjectId
-from typing import List, Optional
-from api.schema.user import UserModel, UserUpdateModel
-from api.helper.db import db
+from uuid import uuid4
+from sqlalchemy.orm import Session
+from api.models import User
 from api.helper.security import get_password_hash
+from api.schema import UserCreate
 
-async def email_exists(email: str) -> bool:
-    existing_user = await db['users'].find_one({"email": email})
-    return existing_user is not None
+async def get_user_by_email(db: Session, email: str):
+    result = await db.query(User).filter(User.email == email).first()
+    if not result:
+        return None
+    return result.toJson()
+        
+async def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(User).offset(skip).limit(limit).all()
 
-async def create_user(user: UserModel) -> Optional[UserModel]:
-    user_dict = user.dict()
-    user_dict['password'] = get_password_hash(user_dict['password'])
-    result = await db['users'].insert_one(user_dict)
-    user.id = str(result.inserted_id)
-    return user
+async def get_user_by_id(db: Session, user_id: str):
+    result = db.query(User).filter(User.id == user_id).first() 
+    if result is None:
+        return None
+    return result.toJson()
 
-async def get_all_users() -> List[UserModel]:
-    users = []
-    async for user in db['users'].find():
-        users.append(UserModel(**user))
-    return users
+async def create_user(db: Session, user_data: UserCreate):
+    user_id = str(uuid4())
+    if get_user_by_email(db, user_data.email) is None:
+        return None
+    db_user = User(id=user_id, firstname=user_data.firstname, lastname=user_data.lastname, email =user_data.email, password=get_password_hash(user_data.password), role=user_data.role)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user.toJson()
 
-async def get_user_by_id(user_id: str) -> Optional[UserModel]:
-    user = await db['users'].find_one({"_id": ObjectId(user_id)})
-
-    if user:
-        return UserModel(**user)
+async def update_user(db: Session, user_id: str, user_data: dict):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user:
+        for key, value in user_data.items():
+            setattr(db_user, key, value)
+        db.commit()
+        db.refresh(db_user)
+        return db_user.toJson()
     return None
 
-async def update_user(user_id: str, updated_user_data: UserUpdateModel) -> Optional[UserModel]:
-    updated_user = await db['users'].find_one_and_update(
-        {"_id": ObjectId(user_id)},
-        {"$set": updated_user_data.dict()},
-        return_document=True
-    )
-    if updated_user:
-        return UserModel(**updated_user)
-    return None
-
-async def delete_user(user_id: str) -> Optional[UserModel]:
-    user = await get_user_by_id(user_id)
-    await db['users'].delete_one({"_id": ObjectId(user_id)})
-    if user:
-        return UserModel(**user)
-    return None
-
-async def get_user_email(email: str):
-    user = await db['users'].find_one({"email": email})
-    if user:
-        return user
+async def delete_user(db: Session, user_id: str):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return db_user.toJson()
     return None

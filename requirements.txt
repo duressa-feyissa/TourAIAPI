@@ -11,3 +11,11 @@ email-validator
 python-jose[cryptography]
 passlib[bcrypt]
 motor
+FastAPI
+pydantic
+typing
+openai
+SQLAlchemy
+pymysql
+uvicorn
+cloudinary

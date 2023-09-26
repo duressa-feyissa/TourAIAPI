@@ -2,7 +2,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from api.helper.auth import create_access_token, verify_password, authenticate_user_by_token
-from api.crud.user import get_user_email
+from api.crud.user import get_user_by_email
 
 router = APIRouter()
 ACCESS_TOKEN_EXPIRE_MINUTES = 10000
@@ -11,7 +11,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 10000
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     email = form_data.username
     password = form_data.password
-    user = await get_user_email(email)
+    user = await get_user_by_email(email)
 
     if user is None or not verify_password(password, user.get('password')):
         raise HTTPException(status_code=400, detail="Invalid credentials")
